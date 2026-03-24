@@ -48,15 +48,16 @@ export default function Reports() {
       const month = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
       const sortKey = dateObj.getFullYear() * 100 + dateObj.getMonth();
       const current = map.get(month) || { name: month, amount: 0, sortKey };
-      map.set(month, { ...current, amount: current.amount + doc.amount });
+      const netAmount = doc.type === 'Credit Note' ? -doc.amount : doc.amount;
+      map.set(month, { ...current, amount: current.amount + netAmount });
     });
     return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
   }, [filteredData]);
 
-  const totalSpend = filteredData.reduce((acc, curr) => acc + curr.amount, 0);
-  const totalVAT = filteredData.reduce((acc, curr) => acc + curr.vat, 0);
-  const pendingSpend = filteredData.filter(d => d.status === 'Pending').reduce((acc, curr) => acc + curr.amount, 0);
-  const approvedSpend = filteredData.filter(d => d.status === 'Approved').reduce((acc, curr) => acc + curr.amount, 0);
+  const totalSpend = filteredData.reduce((acc, curr) => acc + (curr.type === 'Credit Note' ? -curr.amount : curr.amount), 0);
+  const totalVAT = filteredData.reduce((acc, curr) => acc + (curr.type === 'Credit Note' ? -curr.vat : curr.vat), 0);
+  const pendingSpend = filteredData.filter(d => d.status === 'Pending').reduce((acc, curr) => acc + (curr.type === 'Credit Note' ? -curr.amount : curr.amount), 0);
+  const approvedSpend = filteredData.filter(d => d.status === 'Approved').reduce((acc, curr) => acc + (curr.type === 'Credit Note' ? -curr.amount : curr.amount), 0);
 
   const generateInsights = () => {
     if (filteredData.length === 0) return ["Not enough data to generate AI insights."];
@@ -83,7 +84,10 @@ export default function Reports() {
 
     // Vendor Concentration risks
     const vendorMap: Record<string, number> = {};
-    filteredData.forEach(d => { vendorMap[d.vendor] = (vendorMap[d.vendor] || 0) + d.amount; });
+    filteredData.forEach(d => { 
+      const netAmount = d.type === 'Credit Note' ? -d.amount : d.amount;
+      vendorMap[d.vendor] = (vendorMap[d.vendor] || 0) + netAmount; 
+    });
     const topVendor = Object.entries(vendorMap).sort((a,b) => b[1] - a[1])[0];
     if (topVendor && topVendor[1] > totalSpend * 0.5 && totalSpend > 0) {
       insights.push(`Vendor Concentration Risk: Over 50% of your spend is concentrated on a single supplier (${topVendor[0]}).`);

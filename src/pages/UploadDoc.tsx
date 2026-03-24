@@ -29,7 +29,7 @@ export default function UploadDoc() {
     setIsExactDuplicate(false);
     
     if (!apiKey) {
-      setExtractionError("Missing Gemini API Key! Please click the Settings gear icon in the sidebar to securely enter your free key for Real AI Document Extraction.");
+      setExtractionError("Missing Gemini API Key! Please configure the VITE_GEMINI_API_KEY environment variable in Vercel, or click the Settings gear icon in the sidebar to securely enter your key manually on this device.");
       setFile(null);
       setIsExtracting(false);
       return;

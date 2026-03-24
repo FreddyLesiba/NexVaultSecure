@@ -26,7 +26,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return {
       user: savedUser ? JSON.parse(savedUser) : null,
       documents: savedDocs ? JSON.parse(savedDocs) : [],
-      apiKey: savedKey || null,
+      apiKey: import.meta.env.VITE_GEMINI_API_KEY || savedKey || null,
     };
   });
 
@@ -39,9 +39,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, [state.documents]);
   
   useEffect(() => {
-    if (state.apiKey) {
+    if (state.apiKey && state.apiKey !== import.meta.env.VITE_GEMINI_API_KEY) {
       localStorage.setItem('docmgr_apikey', state.apiKey);
-    } else {
+    } else if (!state.apiKey) {
       localStorage.removeItem('docmgr_apikey');
     }
   }, [state.apiKey]);
