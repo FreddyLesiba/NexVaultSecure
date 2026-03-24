@@ -14,11 +14,9 @@ import {
 } from 'lucide-react';
 
 export default function Layout() {
-  const { user, logout, apiKey, setApiKey } = useAppContext();
+  const { user, logout } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSettings, setShowSettings] = useState(false);
-  const [tempKey, setTempKey] = useState(apiKey || '');
 
   const handleLogout = () => {
     logout();
@@ -90,17 +88,6 @@ export default function Layout() {
         </nav>
         
         <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border-glass)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {user.role === 'admin' && (
-            <button 
-              onClick={() => setShowSettings(true)}
-              className="nav-item" 
-              style={{ width: '100%', justifyContent: 'flex-start' }}
-            >
-              <Settings size={20} />
-              <span>Settings / API Key</span>
-            </button>
-          )}
-
           <div className="glass-card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
             <div style={{ background: 'rgba(99, 102, 241, 0.2)', padding: '0.5rem', borderRadius: '8px', color: 'var(--accent-primary)' }}>
               <UserIcon size={20} />
@@ -134,38 +121,6 @@ export default function Layout() {
         </div>
       </main>
 
-      {showSettings && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '400px', padding: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.25rem' }}>System Settings</h2>
-              <button onClick={() => setShowSettings(false)} className="text-secondary"><Settings size={20}/></button>
-            </div>
-            
-            <div className="form-group">
-              <label className="form-label" style={{ color: 'var(--text-primary)' }}>Google Gemini API Key (100% Free)</label>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                Since this is a client-side app, we use Google's free Gemini API to securely read your invoices.
-                <br/><br/>
-                Get your free key here instantly:<br/>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style={{color: 'var(--accent-primary)', textDecoration: 'underline'}}>Google AI Studio</a>
-              </p>
-              <input 
-                type="password" 
-                className="form-input" 
-                placeholder="AIza..." 
-                value={tempKey}
-                onChange={e => setTempKey(e.target.value)}
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
-              <button className="btn btn-secondary" onClick={() => setShowSettings(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={() => { setApiKey(tempKey); setShowSettings(false); }}>Save API Key</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

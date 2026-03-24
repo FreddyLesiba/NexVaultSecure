@@ -44,6 +44,8 @@ export default function Reports() {
   const chartData = useMemo(() => {
     const map = new Map();
     filteredData.forEach(doc => {
+      if (doc.status !== 'Approved') return;
+      
       const dateObj = new Date(doc.date);
       const month = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
       const sortKey = dateObj.getFullYear() * 100 + dateObj.getMonth();
@@ -68,7 +70,7 @@ export default function Reports() {
       const recent = chartData[chartData.length - 1].amount;
       const prev = chartData[chartData.length - 2].amount;
       if (recent > prev * 1.5) insights.push(`Spending trend alert: A severe 50%+ spike in spending was detected in ${chartData[chartData.length - 1].name}.`);
-      else if (recent < prev * 0.8) insights.push(`Favorable spending trend: Spending dropped significantly in ${chartData[chartData.length - 1].name}.`);
+      else if (recent < prev * 0.8) insights.push(`Net spend decreased due to high credit note activity in ${chartData[chartData.length - 1].name}.`);
       else insights.push("Spending trends over time appear stable across the selected range.");
     } else {
       insights.push(`Total spend over this period is $${totalSpend.toFixed(2)}. Gather more historical data for trend matching.`);
