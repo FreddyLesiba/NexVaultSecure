@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
 import { 
@@ -8,7 +8,6 @@ import {
   BarChart, 
   LogOut,
   User as UserIcon,
-  Settings,
   Users,
   LayoutDashboard
 } from 'lucide-react';
